@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- No solid background (transparent) -->
+    <solid android:color="@android:color/transparent" />
+
+    <!-- Border for the hollow rectangle -->
+    <stroke
+        android:width="2dp"
+        android:color="@color/green"/>  <!-- Border color (black) -->
+
+    <!-- Rounded corners for the rectangle (optional) -->
+    <corners android:radius="8dp" />  <!-- Radius for rounded corners (8dp) -->
+</shape>

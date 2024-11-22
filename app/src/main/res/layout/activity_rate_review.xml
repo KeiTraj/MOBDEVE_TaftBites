@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--    RATE & REVIEW PAGE-->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#FFF5E1">
+
+
+    <!-- Back Button (Optional) -->
+    <ImageButton
+        android:id="@+id/backbutton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="12dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Back button"
+        android:src="@drawable/baseline_arrow_back_ios_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Title for the Activity -->
+    <TextView
+        android:id="@+id/rateReviewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="@font/inter_bold"
+        android:text="GIVE A RATE &amp; REVIEW"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <!-- Subtitle for the rating section -->
+    <TextView
+        android:id="@+id/giveRatingText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:fontFamily="@font/inter_bold"
+        android:text="GIVE A RATING"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <!-- RatingBar for rating -->
+    <RatingBar
+        android:id="@+id/ratingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:stepSize="1.0"
+        android:rating="0"
+        android:isIndicator="false"
+        android:scaleX="1.5"
+        android:scaleY="1.5"
+        android:layout_gravity="center"
+        android:layout_marginBottom="30dp"
+        style="?android:attr/ratingBarStyleIndicator" />
+
+    <!-- Subtitle for review text -->
+    <TextView
+        android:id="@+id/leaveReviewText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:fontFamily="@font/inter_bold"
+        android:text="LEAVE A REVIEW"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <!-- Multiline EditText for Review Input -->
+    <EditText
+        android:id="@+id/reviewInput"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:hint="Write your review here..."
+        android:background="@drawable/rounded_white_background"
+        android:padding="16dp"
+        android:gravity="top|start"
+        android:inputType="textMultiLine"
+        android:maxLines="5"
+        android:layout_marginBottom="30dp" />
+
+    <!-- Post Button -->
+    <Button
+        android:id="@+id/postButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="POST"
+        android:textColor="@android:color/white"
+        android:backgroundTint="#FF6B00"
+        android:fontFamily="@font/inter_semibold"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="16dp"
+        android:layout_gravity="center"/>
+
+</LinearLayout>

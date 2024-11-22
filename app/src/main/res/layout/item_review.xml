@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--    // This file is for RESTAURANTDETAILS page-->
+
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="4dp"
+    app:cardUseCompatPadding="true">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <!-- Review Text -->
+        <TextView
+            android:id="@+id/reviewText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cool place! Great food! The owner is also nice."
+            android:textColor="@color/black"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:paddingBottom="8dp" />
+
+        <!-- Reviewer Details (Rating and Name) -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Rating with Star Icon -->
+            <TextView
+                android:id="@+id/reviewRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5"
+                android:drawableLeft="@drawable/star_fill"
+                android:drawablePadding="4dp"
+                android:textColor="@color/black"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
+            <!-- Reviewer Name -->
+            <TextView
+                android:id="@+id/reviewerName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="• Ellaine M."
+                android:textColor="@color/black"
+                android:paddingStart="8dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

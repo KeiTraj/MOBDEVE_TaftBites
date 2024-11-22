@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "750374923846",
+    "project_id": "taft-bites",
+    "storage_bucket": "taft-bites.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:750374923846:android:aaa00667db941b09696447",
+        "android_client_info": {
+          "package_name": "com.mobdeve.s21.grp4.mco_taftbites"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCqSCKE8s3yLC4VJlGdUDGenkFp97On4M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
