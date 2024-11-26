@@ -4,6 +4,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -15,32 +17,42 @@
         android:theme="@style/Theme.MCO_TaftBites"
         tools:targetApi="31">
 
-<!--        &lt;!&ndash; Splash Activity (Launcher Activity) &ndash;&gt;-->
-<!--        <activity-->
-<!--            android:name=".SplashActivity"-->
-<!--            android:exported="true">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-<!--        </activity>-->
-
-<!--        &lt;!&ndash; Login Activity &ndash;&gt;-->
-<!--        <activity android:name=".LoginActivity" />-->
-
-<!--        &lt;!&ndash; Signup Activity &ndash;&gt;-->
-<!--        <activity android:name=".SignupActivity" />-->
-
-
-        <!-- Main Page Activity (Launcher Activity) -->
+        <!-- Splash Activity (Launcher Activity) -->
         <activity
-            android:name=".MainPageActivity"
+            android:name=".SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+<!--        Add an activity for Facebook, and an activity and intent filter for Chrome Custom Tabs inside your application element:-->
+        <activity android:name="com.facebook.FacebookActivity"
+            android:configChanges=
+                "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name" />
+        <activity
+            android:name="com.facebook.CustomTabActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="@string/fb_login_protocol_scheme" />
+            </intent-filter>
+        </activity>
+
+        <!-- Main Page Activity -->
+        <activity
+            android:name=".MainPageActivity"
+            android:exported="true" />
+
+        <!-- Login Activity -->
+        <activity android:name=".LoginActivity" />
+
+        <!-- Signup Activity -->
+        <activity android:name=".SignupActivity" />
 
         <!-- Restaurant Details Activity -->
         <activity
@@ -57,9 +69,6 @@
             android:name=".RateReviewActivity"
             android:exported="true" />
 
-        <!-- Main Activity -->
-
-
         <!-- Metadata for preloaded fonts -->
         <meta-data
             android:name="preloaded_fonts"
@@ -74,6 +83,8 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+        <meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token"/>
 
     </application>
 

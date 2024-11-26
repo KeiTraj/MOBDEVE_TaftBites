@@ -1,16 +1,22 @@
 package com.mobdeve.s21.grp4.mco_taftbites;
 
-import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -18,16 +24,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainPageActivity extends AppCompatActivity {
-    private FirebaseFirestore db; // Firestore instance
-    private List<RestaurantItem> restaurantList; // List to hold restaurant data
-    private RestaurantAdapter adapter; // Adapter for RecyclerView
+
+    Button facebook_login;
+    private FirebaseFirestore db;
+    private List<RestaurantItem> restaurantList;
+    private RestaurantAdapter adapter;
+    CallbackManager callbackManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_page); // Ensure this matches the correct layout file
+        setContentView(R.layout.main_page);
 
-        // Customize the filter button
+        callbackManager = CallbackManager.Factory.create();
+
+        LoginManager.getInstance().registerCallback(callbackManager,
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        //startActivity(new Intent());
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        // App code
+                    }
+
+                    @Override
+                    public void onError(FacebookException exception) {
+                        // App code
+                    }
+                });
+
+        // Retrieve user details from Intent
+        String username = getIntent().getStringExtra("username");
+        String email = getIntent().getStringExtra("email");
+        Log.d("MainPageActivity", "Logged-in User: " + username + " (" + email + ")");
+
+        // Customize filter button
         customizeFilterButton();
 
         // Initialize Firestore and RecyclerView
@@ -36,65 +70,67 @@ public class MainPageActivity extends AppCompatActivity {
 
         // Fetch restaurant data from Firestore
         fetchRestaurantsFromFirestore();
+
+
+
+
     }
 
-    /**
-     * Customizes the filter button appearance.
-     */
-    @SuppressLint({"MissingInflatedId", "LocalSuppress"})
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     private void customizeFilterButton() {
-        Button filterButton = findViewById(R.id.filter_button); // Use the correct button ID
-        filterButton.setBackgroundColor(Color.parseColor("#8BC34A")); // Set a custom background color
+        Button filterButton = findViewById(R.id.filter_button);
+        filterButton.setBackgroundColor(Color.parseColor("#8BC34A"));
     }
 
-    /**
-     * Initializes the Firestore instance.
-     */
     private void initializeFirestore() {
-        db = FirebaseFirestore.getInstance(); // Get Firestore instance
+        db = FirebaseFirestore.getInstance();
     }
 
-    /**
-     * Initializes the RecyclerView and its adapter.
-     */
     private void initializeRecyclerView() {
-        RecyclerView recyclerView = findViewById(R.id.restaurantRV); // RecyclerView for restaurants
-        recyclerView.setLayoutManager(new LinearLayoutManager(this)); // Set LinearLayoutManager
-        restaurantList = new ArrayList<>(); // Initialize empty restaurant list
-        adapter = new RestaurantAdapter(this, restaurantList); // Initialize adapter
-        recyclerView.setAdapter(adapter); // Set adapter to RecyclerView
+        RecyclerView recyclerView = findViewById(R.id.restaurantRV);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        restaurantList = new ArrayList<>();
+        adapter = new RestaurantAdapter(this, restaurantList);
+        recyclerView.setAdapter(adapter);
     }
 
-    /**
-     * Fetches restaurant data from Firestore and updates the RecyclerView.
-     */
     private void fetchRestaurantsFromFirestore() {
-        db.collection("restaurants") // Firestore collection name
+        db.collection("restaurants")
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        restaurantList.clear(); // Clear list to avoid duplicates
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            try {
-                                // Map Firestore document to RestaurantItem
-                                RestaurantItem restaurant = new RestaurantItem(
-                                        document.getId(),
-                                        document.getString("name"),
-                                        document.getDouble("rating").floatValue(),
-                                        document.getString("distance"),
-                                        document.getString("cuisineType"),
-                                        document.getString("imageUrl")
-                                );
-                                restaurantList.add(restaurant); // Add restaurant to the list
-                            } catch (Exception e) {
-                                Log.e("Firestore", "Error mapping document: " + document.getId(), e);
+                        restaurantList.clear();
+                        if (task.getResult().isEmpty()) {
+                            Log.d("Firestore", "No restaurants found.");
+                            Toast.makeText(MainPageActivity.this, "No restaurants available.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                try {
+                                    RestaurantItem restaurant = new RestaurantItem(
+                                            document.getId(),
+                                            document.getString("name"),
+                                            document.getDouble("rating").floatValue(),
+                                            document.getString("distance"),
+                                            document.getString("cuisineType"),
+                                            document.getString("imageUrl")
+                                    );
+                                    restaurantList.add(restaurant);
+                                } catch (Exception e) {
+                                    Log.e("Firestore", "Error mapping document: " + document.getId(), e);
+                                }
                             }
                         }
-                        adapter.notifyDataSetChanged(); // Notify adapter about updated data
+                        adapter.notifyDataSetChanged();
                     } else {
                         Log.e("Firestore", "Error fetching documents", task.getException());
                     }
                 })
-                .addOnFailureListener(e -> Log.e("Firestore", "Error fetching data", e)); // Handle failure
+                .addOnFailureListener(e -> Log.e("Firestore", "Error fetching data", e));
     }
 }

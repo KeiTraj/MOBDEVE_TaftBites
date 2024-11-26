@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Style for Buttons with Straight Edges -->
+    <style name="Button.NoRoundedCorners" parent="Widget.Material3.Button">
+        <item name="cornerRadius">0dp</item> <!-- Ensures straight edges -->
+        <item name="android:backgroundTint">@color/green</item> <!-- Default background color -->
+        <item name="android:textColor">@color/white</item> <!-- Default text color -->
+    </style>
+</resources>

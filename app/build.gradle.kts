@@ -49,7 +49,8 @@ dependencies {
     // Firebase dependencies
     implementation(platform("com.google.firebase:firebase-bom:33.6.0")) // Firebase BOM
     implementation("com.google.firebase:firebase-database") // Firebase Realtime Database
-    implementation("com.google.firebase:firebase-firestore") // Firebase Firestore
+    implementation("com.google.firebase:firebase-firestore")
+    implementation(libs.firebase.auth) // Firebase Firestore
 
     // Test dependencies
     testImplementation(libs.junit)
