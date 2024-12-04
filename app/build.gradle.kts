@@ -28,9 +28,16 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
+        // Use Java 17 toolchain
+        sourceCompatibility = JavaVersion.VERSION_1_8  // Gradle still needs to know this for backward compatibility
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
+//    java {
+//        toolchain {
+//            languageVersion = JavaLanguageVersion.of(17) // Set to Java 17 using the toolchain
+//        }
+   // }
 }
 
 dependencies {
@@ -41,16 +48,16 @@ dependencies {
     implementation(libs.play.services.maps)
     implementation("com.facebook.android:facebook-android-sdk:16.1.2") // Facebook SDK
 
-
     implementation("com.squareup.picasso:picasso:2.8") // Add Picasso
     implementation("com.squareup.picasso:picasso:2.71828")
-
 
     // Firebase dependencies
     implementation(platform("com.google.firebase:firebase-bom:33.6.0")) // Firebase BOM
     implementation("com.google.firebase:firebase-database") // Firebase Realtime Database
     implementation("com.google.firebase:firebase-firestore")
     implementation(libs.firebase.auth) // Firebase Firestore
+    implementation ("com.google.android.gms:play-services-maps:17.0.0")
+    implementation ("com.google.firebase:firebase-firestore:24.0.0")
 
     // Test dependencies
     testImplementation(libs.junit)

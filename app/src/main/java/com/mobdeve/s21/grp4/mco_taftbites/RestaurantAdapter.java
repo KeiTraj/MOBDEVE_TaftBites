@@ -80,4 +80,11 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
             viewButton = itemView.findViewById(R.id.viewButton); // Button ID from restaurants.xml
         }
     }
+
+    public void updateList(List<RestaurantItem> updatedList) {
+        this.restaurantList.clear();
+        this.restaurantList.addAll(updatedList);
+        notifyDataSetChanged();
+    }
+
 }
