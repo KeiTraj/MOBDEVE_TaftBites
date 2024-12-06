@@ -2,6 +2,7 @@ package com.mobdeve.s21.grp4.mco_taftbites;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,65 +11,60 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Arrays;
 
 public class LoginActivity extends AppCompatActivity {
 
-    Button facebook_login;
-    CallbackManager callbackManager;
-    private EditText emailInput;
-    private EditText passwordInput;
-    private Button loginButton;
-    private Button createAccountButton;
+    private EditText emailInput, passwordInput;
+    private Button loginButton, createAccountButton, facebookLoginButton;
+    private FirebaseAuth mAuth;
+    private CallbackManager callbackManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_page); // Link to your login layout
 
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+
+        // Initialize Facebook Callback Manager
         callbackManager = CallbackManager.Factory.create();
 
-        LoginManager.getInstance().registerCallback(callbackManager,
-                new FacebookCallback<LoginResult>() {
-                    @Override
-                    public void onSuccess(LoginResult loginResult) {
-                        startActivity(new Intent(LoginActivity.this,MainPageActivity.class));
-                        finish();
-                    }
+        // Set up Facebook login
+        facebookLoginButton = findViewById(R.id.facebook_login);
+        facebookLoginButton.setOnClickListener(v ->
+                LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile"))
+        );
 
-                    @Override
-                    public void onCancel() {
-                        // App code
-                    }
-
-                    @Override
-                    public void onError(FacebookException exception) {
-                        // App code
-                    }
-                });
-
-        facebook_login = findViewById(R.id.facebook_login);
-        facebook_login.setOnClickListener(new View.OnClickListener() {
+        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
-            public void onClick(View v) {
-//                LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
-                LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile"));
+            public void onSuccess(LoginResult loginResult) {
+                startActivity(new Intent(LoginActivity.this, MainPageActivity.class));
+                finish();
+            }
+
+            @Override
+            public void onCancel() {
+                Toast.makeText(LoginActivity.this, "Facebook login canceled.", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                Toast.makeText(LoginActivity.this, "Facebook login error: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
 
         // Initialize UI components
         emailInput = findViewById(R.id.email_input);
@@ -76,15 +72,15 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.loginBTN);
         createAccountButton = findViewById(R.id.create_account_button);
 
-        // Set up login button click listener
+        // Login button click listener
         loginButton.setOnClickListener(v -> {
             String email = emailInput.getText().toString().trim();
             String password = passwordInput.getText().toString().trim();
 
-            if (email.isEmpty() || password.isEmpty()) {
+            if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
                 Toast.makeText(LoginActivity.this, "Please enter both email and password", Toast.LENGTH_SHORT).show();
             } else {
-                validateUser(email, password);
+                loginUser(email, password);
             }
         });
 
@@ -101,40 +97,24 @@ public class LoginActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void validateUser(String email, String password) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
-
-        // Query the database for the user by email
-        Query checkUserDatabase = reference.orderByChild("email").equalTo(email);
-
-        checkUserDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+    private void loginUser(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    // Retrieve password from the database
-                    String passwordFromDB = snapshot.child(email.replace(".", ",")).child("password").getValue(String.class);
-
-                    if (passwordFromDB != null && passwordFromDB.equals(password)) {
-                        // Get additional user data
-                        String usernameFromDB = snapshot.child(email.replace(".", ",")).child("username").getValue(String.class);
-
-                        // Navigate to MainPageActivity and pass user data
-                        Intent intent = new Intent(LoginActivity.this, MainPageActivity.class);
-                        intent.putExtra("username", usernameFromDB);
-                        intent.putExtra("email", email);
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        Toast.makeText(LoginActivity.this, "Invalid credentials", Toast.LENGTH_SHORT).show();
-                    }
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(LoginActivity.this, MainPageActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    finish();
                 } else {
-                    Toast.makeText(LoginActivity.this, "User does not exist", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Invalid credentials!", Toast.LENGTH_SHORT).show();
                 }
             }
-
+        }).addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(LoginActivity.this, "Database error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(LoginActivity.this, "Login failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
