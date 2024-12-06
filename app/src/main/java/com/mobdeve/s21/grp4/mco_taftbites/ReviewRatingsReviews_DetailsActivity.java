@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -74,7 +75,7 @@ public class ReviewRatingsReviews_DetailsActivity extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists() && documentSnapshot.contains("reviews")) {
-                        // Fetch reviews array
+                        // Fetch reviews array directly from the restaurant document
                         List<Map<String, Object>> reviewsArray = (List<Map<String, Object>>) documentSnapshot.get("reviews");
                         reviewList.clear();
 
@@ -102,5 +103,9 @@ public class ReviewRatingsReviews_DetailsActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Log.e("Firestore", "Error fetching reviews", e));
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fetchReviewsFromFirebase(); // Refresh the reviews list when returning to the activity
+    }
 }

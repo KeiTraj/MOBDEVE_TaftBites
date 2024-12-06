@@ -22,23 +22,14 @@ public class RestaurantItem {
         this.imageUrl = imageUrl;
     }
     public String getId() { return id; }
-
     public String getName() { return name;}
-
     public void setName(String name) {this.name = name;}
-
     public float getRating() {return rating;}
-
     public void setRating(float rating) {this.rating = rating;}
-
     public String getDistance() {return distance;}
-
     public void setDistance(String distance) {this.distance = distance;}
-
     public String getCuisineType() {return cuisineType;}
-
     public void setCuisineType(String cuisineType) {this.cuisineType = cuisineType;}
-
     public String getImageUrl() {return imageUrl;}
 
     public void setImageUrl(String imageUrl) {this.imageUrl = imageUrl;}
