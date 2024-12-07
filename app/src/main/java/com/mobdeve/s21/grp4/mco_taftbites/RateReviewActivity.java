@@ -39,20 +39,21 @@ public class RateReviewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rate_review);
 
-        // Initialize Firestore and Auth
+        // Initialize Firebase Firestore and Auth
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-        // Get restaurant ID passed from the previous activity
+        // Get the restaurant ID passed from the previous activity
         restaurantId = getIntent().getStringExtra("restaurantId");
+
+        // Debugging log for restaurantId
+        Log.d("RateReviewActivity", "Restaurant ID: " + restaurantId);
+
         if (restaurantId == null || restaurantId.isEmpty()) {
-            Log.e("RateReviewActivity", "Restaurant ID is null or empty");
-            Toast.makeText(this, "Invalid Restaurant. Unable to post a review.", Toast.LENGTH_SHORT).show();
-            finish(); // Exit activity
+            Toast.makeText(this, "Restaurant ID is missing", Toast.LENGTH_SHORT).show();
+            finish();
             return;
         }
-
-        Log.d("RateReviewActivity", "Restaurant ID: " + restaurantId);
 
         // Initialize UI elements
         backButton = findViewById(R.id.backbutton);
@@ -60,34 +61,36 @@ public class RateReviewActivity extends AppCompatActivity {
         reviewInput = findViewById(R.id.reviewInput);
         postButton = findViewById(R.id.postButton);
 
-        // Progress Dialog
+        // Initialize Progress Dialog
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Submitting your review...");
         progressDialog.setCancelable(false);
 
-        // Back Button
+        // Set Back Button functionality
         backButton.setOnClickListener(v -> finish());
 
-        // Post Button
+        // Handle Post Review Button click
         postButton.setOnClickListener(v -> postReview());
     }
 
     private void postReview() {
+        // Ensure user is logged in
         if (mAuth.getCurrentUser() == null) {
-            Toast.makeText(this, "You need to log in to submit a review.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "You need to be logged in to submit a review", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        // Get review details
         String reviewerName = mAuth.getCurrentUser().getDisplayName();
         if (reviewerName == null || reviewerName.isEmpty()) {
             reviewerName = "Anonymous";
         }
-
         String reviewText = reviewInput.getText().toString();
         float rating = ratingBar.getRating();
 
+        // Validate input
         if (reviewText.isEmpty()) {
-            Toast.makeText(this, "Please write a review.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please write a review", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -100,9 +103,10 @@ public class RateReviewActivity extends AppCompatActivity {
         review.put("reviewDate", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         review.put("reviewRating", rating);
 
+        // Show Progress Dialog
         progressDialog.show();
 
-        // Check if restaurant document exists and add the review
+        // Check if restaurant document exists
         db.collection("restaurants")
                 .document(restaurantId)
                 .get()
@@ -110,30 +114,32 @@ public class RateReviewActivity extends AppCompatActivity {
                     if (documentSnapshot.exists()) {
                         Log.d("RateReviewActivity", "Restaurant found: " + restaurantId);
 
-                        // Update the reviews array
+                        // Add the review to the reviews array
                         db.collection("restaurants")
                                 .document(restaurantId)
                                 .update("reviews", FieldValue.arrayUnion(review))
                                 .addOnSuccessListener(aVoid -> {
                                     progressDialog.dismiss();
-                                    Toast.makeText(RateReviewActivity.this, "Review submitted successfully.", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(RateReviewActivity.this, "Review submitted successfully", Toast.LENGTH_SHORT).show();
                                     finish();
                                 })
                                 .addOnFailureListener(e -> {
                                     progressDialog.dismiss();
-                                    Log.e("RateReviewActivity", "Error posting review", e);
-                                    Toast.makeText(RateReviewActivity.this, "Failed to submit review.", Toast.LENGTH_SHORT).show();
+                                    Log.e("Firestore", "Error posting review", e);
+                                    Toast.makeText(RateReviewActivity.this, "Failed to submit review", Toast.LENGTH_SHORT).show();
                                 });
                     } else {
                         progressDialog.dismiss();
-                        Log.e("RateReviewActivity", "Restaurant not found.");
-                        Toast.makeText(RateReviewActivity.this, "Restaurant not found.", Toast.LENGTH_SHORT).show();
+                        Log.e("RateReviewActivity", "Restaurant not found");
+                        Toast.makeText(RateReviewActivity.this, "Restaurant not found", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(e -> {
                     progressDialog.dismiss();
-                    Log.e("RateReviewActivity", "Error fetching restaurant data", e);
-                    Toast.makeText(RateReviewActivity.this, "Failed to fetch restaurant data.", Toast.LENGTH_SHORT).show();
+                    Log.e("Firestore", "Error fetching restaurant", e);
+                    Toast.makeText(RateReviewActivity.this, "Failed to fetch restaurant data", Toast.LENGTH_SHORT).show();
                 });
     }
+
+
 }
